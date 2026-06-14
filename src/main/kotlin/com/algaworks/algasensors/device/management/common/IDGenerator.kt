@@ -1,7 +1,7 @@
-package com.algaworks.algasensors.device.management
+package com.algaworks.algasensors.device.management.common
 
 import io.hypersistence.tsid.TSID
-import java.util.*
+import java.util.Optional
 
 object IDGenerator {
     private val tsidFactory: TSID.Factory
