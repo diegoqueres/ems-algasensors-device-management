@@ -1,9 +1,15 @@
 package com.algaworks.algasensors.device.management.domain.model
 
-import io.hypersistence.tsid.TSID
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
 
+@Entity
 data class Sensor(
-    val id: TSID? = null,
+    @Id
+    @AttributeOverride(name = "value", column = Column(name = "id", columnDefinition = "BIGINT"))
+    val id: SensorId? = null,
     var name: String = "",
     var ip: String = "",
     var location: String = "",

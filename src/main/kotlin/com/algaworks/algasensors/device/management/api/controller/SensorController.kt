@@ -3,22 +3,22 @@ package com.algaworks.algasensors.device.management.api.controller
 import com.algaworks.algasensors.device.management.api.model.SensorInput
 import com.algaworks.algasensors.device.management.common.IDGenerator
 import com.algaworks.algasensors.device.management.domain.model.Sensor
+import com.algaworks.algasensors.device.management.domain.model.SensorId
+import com.algaworks.algasensors.device.management.domain.repository.SensorRepository
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/sensors")
-class SensorController {
+class SensorController(
+    private val sensorRepository: SensorRepository
+) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody sensorInput: SensorInput): Sensor {
-        return Sensor(
-            id = IDGenerator.generateTSID(),
+        val sensor = Sensor(
+            id = SensorId(IDGenerator.generateTSID()),
             name = sensorInput.name,
             ip = sensorInput.ip,
             location = sensorInput.location,
@@ -26,6 +26,8 @@ class SensorController {
             model = sensorInput.model,
             enabled = false
         )
+
+        return sensorRepository.saveAndFlush(sensor)
     }
 
 }
