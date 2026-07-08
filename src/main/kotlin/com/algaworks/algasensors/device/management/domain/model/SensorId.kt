@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable
 import java.io.Serializable
 
 @Embeddable
-open class SensorId(private val value: TSID?) : Serializable {
+open class SensorId(val value: TSID?) : Serializable {
 
     protected constructor() : this(null)
 

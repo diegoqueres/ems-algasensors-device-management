@@ -1,6 +1,7 @@
 package com.algaworks.algasensors.device.management.api.controller
 
 import com.algaworks.algasensors.device.management.api.model.SensorInput
+import com.algaworks.algasensors.device.management.api.model.SensorOutput
 import com.algaworks.algasensors.device.management.common.IDGenerator
 import com.algaworks.algasensors.device.management.domain.model.Sensor
 import com.algaworks.algasensors.device.management.domain.model.SensorId
@@ -16,7 +17,7 @@ class SensorController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody sensorInput: SensorInput): Sensor {
+    fun create(@RequestBody sensorInput: SensorInput): SensorOutput {
         val sensor = Sensor(
             id = SensorId(IDGenerator.generateTSID()),
             name = sensorInput.name,
@@ -27,7 +28,16 @@ class SensorController(
             enabled = false
         )
 
-        return sensorRepository.saveAndFlush(sensor)
+        val savedSensor = sensorRepository.saveAndFlush(sensor)
+        return SensorOutput(
+            id = savedSensor.id!!.value!!,
+            name = savedSensor.name,
+            ip = savedSensor.ip,
+            location = savedSensor.location,
+            protocol = savedSensor.protocol,
+            model = savedSensor.model,
+            enabled = savedSensor.enabled
+        )
     }
 
 }
