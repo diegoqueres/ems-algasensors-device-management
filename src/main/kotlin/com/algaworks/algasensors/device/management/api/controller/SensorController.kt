@@ -6,14 +6,24 @@ import com.algaworks.algasensors.device.management.common.IDGenerator
 import com.algaworks.algasensors.device.management.domain.model.Sensor
 import com.algaworks.algasensors.device.management.domain.model.SensorId
 import com.algaworks.algasensors.device.management.domain.repository.SensorRepository
+import io.hypersistence.tsid.TSID
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/sensors")
 class SensorController(
     private val sensorRepository: SensorRepository
 ) {
+
+    @GetMapping("{sensorId}")
+    fun getOne(@PathVariable sensorId: TSID) : SensorOutput {
+        val sensor = sensorRepository.findById(SensorId(sensorId))
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+
+        return convertToModel(sensor)
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,14 +39,18 @@ class SensorController(
         )
 
         val savedSensor = sensorRepository.saveAndFlush(sensor)
+        return convertToModel(savedSensor)
+    }
+
+    private fun convertToModel(sensor: Sensor): SensorOutput {
         return SensorOutput(
-            id = savedSensor.id!!.value!!,
-            name = savedSensor.name,
-            ip = savedSensor.ip,
-            location = savedSensor.location,
-            protocol = savedSensor.protocol,
-            model = savedSensor.model,
-            enabled = savedSensor.enabled
+            id = sensor.id!!.value!!,
+            name = sensor.name,
+            ip = sensor.ip,
+            location = sensor.location,
+            protocol = sensor.protocol,
+            model = sensor.model,
+            enabled = sensor.enabled
         )
     }
 
