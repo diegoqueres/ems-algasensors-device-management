@@ -52,6 +52,14 @@ class SensorController(
         return convertToModel(savedSensor)
     }
 
+    @DeleteMapping("/{sensorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable sensorId: TSID) {
+        val sensor = sensorRepository.findById(SensorId(sensorId))
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        sensorRepository.delete(sensor)
+    }
+
     private fun convertToModel(sensor: Sensor): SensorOutput {
         return SensorOutput(
             id = sensor.id!!.value!!,
