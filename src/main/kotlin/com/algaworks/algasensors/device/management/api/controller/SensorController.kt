@@ -52,6 +52,20 @@ class SensorController(
         return convertToModel(savedSensor)
     }
 
+    @PutMapping("/{sensorId}")
+    fun update(@PathVariable sensorId: TSID, @RequestBody input: SensorInput): SensorOutput {
+        val sensor = sensorRepository.findById(SensorId(sensorId))
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+
+        sensor.name = input.name
+        sensor.location = input.location
+        sensor.ip = input.ip
+        sensor.model = input.model
+        sensor.protocol = input.protocol
+
+        return convertToModel(sensorRepository.save(sensor))
+    }
+
     @DeleteMapping("/{sensorId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable sensorId: TSID) {
